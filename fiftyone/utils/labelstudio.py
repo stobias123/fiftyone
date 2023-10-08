@@ -23,11 +23,12 @@ import fiftyone.core.labels as fol
 import fiftyone.core.media as fom
 import fiftyone.core.utils as fou
 import fiftyone.utils.annotations as foua
+import label_studio_sdk as ls
 
-ls = fou.lazy_import(
-    "label_studio_sdk",
-    callback=lambda: fou.ensure_import("label_studio_sdk>=0.0.13"),
-)
+#ls = fou.lazy_import(
+#    "label_studio_sdk",
+#    callback=lambda: fou.ensure_import("label_studio_sdk>=0.0.13"),
+#)
 brush = fou.lazy_import(
     "label_studio_converter.brush",
     callback=lambda: fou.ensure_import("label_studio_converter.brush"),
@@ -292,11 +293,10 @@ class LabelStudioAnnotationAPI(foua.AnnotationAPI):
             a dict mapping ``task_id`` to ``sample_id``
         """
         files = [
-            (
-                one["source_id"],
+            ( one["source_id"],
                 (
-                    open(one[one["media_type"]], "rb"),
-                ),
+                    open(one[one["media_type"]], 'rb'),
+                )
             )
             for one in tasks
         ]
@@ -308,6 +308,7 @@ class LabelStudioAnnotationAPI(foua.AnnotationAPI):
             params={"commit_to_project": True},
             files=files,
         )
+        print(upload_resp)
 
         # create tasks out of the uploaded files
         payload = json.dumps(
